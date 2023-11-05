@@ -1,0 +1,12 @@
+
+/*ponizsze kwerendy ustalaja relacje miedzy kolumnami w tabelach bazy danych*/
+
+ALTER TABLE Produkty ADD CONSTRAINT ProduktyIdKategoriiKategorieProduktow FOREIGN KEY (IdKategorii) REFERENCES KategorieProduktow (IdKategorieProduktow)
+ALTER TABLE Pracownicy ADD CONSTRAINT PracownicyIdDzialuDzialy FOREIGN KEY (IdDzialu) REFERENCES Dzialy (IdDzialy)
+ALTER TABLE Pracownicy ADD CONSTRAINT PracownicyIdPrzelozonegoPracownicy FOREIGN KEY (IdPrzelozonego) REFERENCES Pracownicy (IdPracownicy)
+ALTER TABLE ZakupySklepOnlineProdukt ADD CONSTRAINT ZakupySklepOnlineProduktIdZakupZakupySklepOnline FOREIGN KEY (IdZakup) REFERENCES ZakupySklepOnline (IdZakupySklepOnline)
+ALTER TABLE ZakupySklepOnlineProdukt ADD CONSTRAINT ZakupySklepOnlineProduktIdProduktuProdukty FOREIGN KEY (IdProduktu) REFERENCES Produkty (IdProdukty)
+ALTER TABLE Dostawa ADD CONSTRAINT DostawaIdDostawcyDostawcy FOREIGN KEY (IdDostawcy) REFERENCES Dostawcy (IdDostawcy)
+ALTER TABLE Dostawa ADD CONSTRAINT DostawaIdPracownicyPracownicy FOREIGN KEY (IdPracownicy) REFERENCES Pracownicy (IdPracownicy)
+ALTER TABLE DostawaProduktow ADD CONSTRAINT DostawaProduktowIdProduktuProdukty FOREIGN KEY (IdProduktu) REFERENCES Produkty (IdProdukty)
+ALTER TABLE DostawaProduktow ADD CONSTRAINT DostawaProduktowNumerDostawyDostawa FOREIGN KEY (NumerDostawy) REFERENCES Dostawa (IdDostawa)
