@@ -1,0 +1,121 @@
+-- pokaż wszystkie produkty
+
+SELECT * FROM Produkty;
+
+
+-- pokaż nazwę i adres dostawców
+
+SELECT Nazwa, Adres FROM Dostawcy;
+
+
+-- pokaż nazwy działów
+
+SELECT NazwaDzialu FROM Dzialy;
+
+
+
+-- pokaż informację o iPhonie SE;
+
+SELECT * FROM Produkty WHERE Nazwa = 'Apple iPhone SE"
+
+
+
+--pokaż produkty kosztujące więcej niż 2000zł
+
+SELECT * FROM Produkty WHERE Cena >2000;
+
+
+
+-- pokaż wszystkich pracowników
+
+SELECT * FROM Pracownicy;
+
+
+
+-- pokaż wszystkie działy
+
+SELECT * FROM Dzialy;
+
+
+-- pokaż wszystkich dostawców
+
+SELECT * FROM Dostawcy;
+
+
+
+-- pokaż imiona i nazwiska pracowników
+
+SELECT Imie, Nazwisko FROM Pracownicy;
+
+
+-- pokaż nazwy i ceny produktów
+
+SELECT Nazwa, Cena FROM Produkty;
+
+
+
+-- pokaż jednego pracownika
+
+SELECT TOP 1 * FROM Pracownicy;
+
+
+
+-- pokaż trzy produkty
+
+SELECT TOP 3 * FROM Produkty;
+
+
+
+-- pokaż unikalne imiona pracowników
+
+SELECT DISTINCT Imie FROM Pracownicy;
+
+
+
+-- pokaż dwie nazwy kategorii produktów
+
+SELECT TOP 2 Nazwa FROM KategorieProduktow;
+
+
+
+--pokaz pracowników o imieniu Anna
+
+SELECT * FROM Pracownicy WHERE Imie= 'Anna';
+
+
+
+-- pokaż adres firmy Jubiler Andrzej
+
+SELECT Adres FROM Dostawcy WHERE Nazwa = 'Jubiler Andrzej';
+
+
+
+-- pokaż cenę Samsunga S9
+
+SELECT Cena FROM Produkty WHERE Nazwa = 'Samsung S9';
+
+
+
+-- pokaż wszystkie dostawy z 5 grudnia 2020 roku
+
+SELECT * FROM Dostawy WHERE DataDostawy = '2020-12-05';
+
+
+
+--pokaż wszystkie styczniowe dostawy
+
+SELECT * FROM Dostawy WHERE DataDostawy <= '2020-01-31';
+
+
+
+-- pokaż imiona i nazwiska pracowników zarabiających więcej niż 4000zł
+
+SELECT Imie, Nazwisko FROM Pracownicy WHERE PensjaPodstawowa >4000;
+
+
+
+--pokaż jednego pracownika zatrudnionego 1 stycznia 2020
+
+SELECT TOP 1* FROM Pracownicy WHERE DataZatrudnienia = '2020-01-01';
+
+
