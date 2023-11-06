@@ -1,0 +1,27 @@
+-- pokaż produkty kosztujące pomiędzy 1000, a 3000 złotych
+
+SELECT * FROM Produkty WHERE Cena BETWEEN 1000 AND 3000;
+
+
+-- pokaż pracowników nie posiadających przełożonego
+
+SELECT * FROM Pracownicy WHERE IdPrzełożonego IS NULL;
+
+
+-- pokaż produkty Samsunga
+
+SELECT * FROM Produkty WHERE Nazwa LIKE 'Samsung%';
+
+
+-- pokaż produkty LEGO
+
+SELECT * FROM Produkty WHERE Nazwa LIKE '%LEGO%';
+
+
+-- pokaż nazwy Hot Wheelsów posortowanych alfabetycznie
+
+SELECT Nazwa FROM Produkty WHERE Nazwa LIKE 'Hot Wheels%' ORDER BY Nazwa;
+
+-- pokaż 3 najdroższe produkty
+
+SELECT TOP 3* FROM Produkty ORDER BY Cena DESC
