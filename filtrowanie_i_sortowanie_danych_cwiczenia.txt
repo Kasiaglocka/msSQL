@@ -1,0 +1,37 @@
+-- pokaz 3 kobiety zarabiajace co najmniej 3000zl
+
+SELECT TOP 3 * FROM Pracownicy WHERE Imie LIKE '%a' AND PensjaPodstawowa >= 3000;
+
+
+-- pokaz najtansze body Nikona
+
+SELECT TOP 1 * FROM Produkty WHERE Nazwa LIKE 'Nikon%Body%' ORDER BY Cena;
+
+
+
+-- pokaz produkty majace moc pomiedzy 500, a 800 wat (np kuchenka mikrofalowa 800W)
+
+SELECT * FROM Produkty WHERE Nazwa LIKE '%[^0-9] [5-8] [0-8] [0-9]W%';
+
+
+
+-- pokaz imie, nazwisko oraz informacje o zarobkach mezczyzn zarabiajacych powyzej 3000zl lub posiadajacych co najmniej 20% premii (w tabeli podane jest 20 jako 20%)
+
+SELECT Imie, Nazwisko, PensjaPodstawowa FROM Pracownicy WHERE Imie NOT LIKE '%a' AND (PensjaPodstawowa > 3000 OR Premia >= 20);
+
+
+
+-- pokaz najdrozszy produkt Canona nie bedacy BODY
+
+SELECT TOP 1 * FROM Produkty WHERE Nazwa LIKE 'CANON%' AND Nazwa NOT LIKE '%Body%' Order By Cena DESC;
+
+
+
+-- pokaz produkty nie bedace klockami Lego, chyba, że to zestaw zwiazany ze Star Wars w przedziale 50- 100zl
+
+SELECT * FROM Produkty WHERE (Nazwa NOT LIKE 'LEGO%' OR Nazwa LIKE '%StarWars%') AND Cena BETWEEN '50' AND '100';
+
+
+--pokaz mikrofalowki majace co najmniej 850W mocy
+
+SELECT * FROM Produkty WHERE Nazwa LIKE 'Kuchenka mikrofalowa%[8-9][5-9][0-9]W%'
