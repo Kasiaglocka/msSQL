@@ -1,0 +1,33 @@
+-- pokaz imie, nazwisko i rok urodzenia pracownika (zakladajac ze kazdy urodzil sie w XX wieku)
+
+SELECT Imie, Nazwisko, '19' + LEFT (PESEL,2) FROM Pracownicy WHERE LEN (PESEL) = 11;
+
+
+
+-- pokaz imiona i nazwiska kobiet (nie korzystajac z LIKE) w formie "Pani Janina Nowakowska"
+
+SELECT 'Pani ' + Imie + ' ' + Nazwisko FROM Pracownicy WHERE RIGHT (Imie,1) = 'a'
+
+
+
+-- zaokraglij liczbe Pi do 4 miejsc po przecinku
+
+SELECT ROUND (PI(), 4);
+
+
+
+-- znajdź zakupy zrobione w nocy (pomiedzy polnoca a piata rano)
+
+SELECT * FROM ZakupySklepOnline WHERE DATEPART (HH, DataZakupu) BETWEEN 0 AND 5;
+
+
+
+-- ile tygodni minelo od Twojego urodzenia
+
+SELECT DATEDIFF (WK, '1990-01-01', GETDATE ());
+
+
+
+-- wyswietl nazwe i cene produktu w formie kwoty (dwa miejsca po przecinku)
+
+SELECT Nazwa, CAST (Cena AS decimal (10,2)) AS Cena FROM Produkty;
