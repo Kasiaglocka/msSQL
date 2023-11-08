@@ -1,0 +1,109 @@
+-- pokaż imiona, nazwiska i nr PESEL pracownikow tylko z poprawnej dlugosci PESELem, a jesli nie ma podanego PESELu pokaz taka informacje
+
+SELECT Imie, Nazwisko, ISNULL (PESEL, 'Brak PESELu') AS PESEL FROM Pracownicy WHERE LEN (PESEL) = 11 OR PESEL IS NULL;
+
+
+
+-- pokaz pracownikow urodzonych w latach 80tych (bez uzycia LIKE)
+
+SELECT * FROM Pracownicy WHERE LEFT (PESEL, 1) = '8';
+
+
+
+-- pokaz inicjaly pracownikow
+
+SELECT LEFT (Imie, 1) + LEFT (Nazwisko, 1) AS Inicjaly FROM Pracownicy;
+
+
+
+-- pokaz zakupy zrobione w weekend
+
+SELECT * FROM ZakupySklepOnline WHERE DATEPART (DW, DataZakupu) IN (7,1)
+
+
+
+-- pokaz pracownikow zatrudnionych w pierwszych polowach roku
+
+SELECT * FROM Pracownicy WHERE MONTH (DataZatrudnienia) IN (1-6);
+
+SELECT * FROM Pracownicy WHERE MONTH (DataZatrudnienia) <=6;
+
+
+
+-- pokaz pracownikow urodzonych w lipcu
+
+SELECT * FROM Pracownicy WHERE SUBSTRING (PESEL,3,2) = '07';
+
+
+
+--pokaz wszystkie telefony Samsunga z serii S z dopiskiem Galaxy (np Samsung Galaxy S8)
+
+SELECT REPLACE (Nazwa, 'Samsung S', 'Samsung Galaxy S') AS Nazwa FROM Produkty WHERE Nazwa LIKE 'SAMSUNG S%';
+
+
+
+-- pokaz mezczyzn zatrudnionych w drugim kwartale dowolnego roku
+
+SELECT * FROM Pracownicy WHERE Imie NOT LIKE '%a' AND MONTH (DataZatrudnienia) IN (4,5,6);
+
+SELECT * FROM Pracownicy WHERE RIGHT(Imie, 1) <> 'a' AND DATEPART(QQ, DataZatrudnienia) = 2;
+
+
+
+-- usun polskie znaki z nazw produktow
+
+SELECT REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(Nazwa, 'ó', 'o'), 'ł', 'l'), 'ą', 'a'), 'ę' , 'e'), 'ń', 'n'), 'ś', 's'), 'ż', 'z'), 'ć', 'c'), 'ź', z') FROM Produkty;
+
+
+
+-- na podstawie PESELu pokaz wszystkie kobiety (10 cyfra jest zerem lub parzysta)
+
+SELECT * FROM Pracownicy WHERE SUBSTRING (PESEL, 10,1) IN (0,2,4,6,8);
+
+
+
+-- pokaz wszystkie telefony Samsung z dopiskiem Galaxy (np Samsung Galaxy Note 8 i Samsung Galaxy S8)
+
+Select REPLACE (Nazwa, 'Samsung', 'Samsung Galaxy') AS Nazwa FROM Produkty WHERE Nazwa LIKE 'SAMSUNG%';
+
+
+
+-- przygotuj identyfikatory dla pracownikow (imie i nazwisko w jednej kolumnie pisane wielkimi literami)
+
+SELECT UPPER (CONCAT (Imie, ' ', Nazwisko)) FROM Pracownicy;
+
+
+
+--przygotuj maile dla pracownikow (moga zostac polskie znaki)- pierwsza litera imienia, kropka, nazwisko, @sklep.pl
+
+SELECT LOWER (LEFT (Imie,1)+ '.' + Nazwisko + '@sklep.pl') FROM Pracownicy;
+
+
+
+-- znajdz pracownikow zatrudnionych w weekend
+
+SELECT * FROM Pracownicy WHERE DATEPART (DW, DataZatrudnienia) IN (7,1)
+
+
+
+-- policz wyplaty pracownikow (w kolumnie premia podane jest 30 jako 30%)
+
+SELECT PensjaPodstawowa * Premia/100 + PensjaPodstawowa AS Wyplata FROM Pracownicy; 
+
+SELECT Imie, Nazwisko, CAST(PensjaPodstawowa + PensjaPodstawowa * Premia/100.0 AS decimal(10,2)) AS Wyplata FROM Pracownicy;
+
+
+
+-- policz kwoty netto dla produktow (wszystkie ceny to brutto zawierajace 23%VATu)
+
+SELECT Nazwa, Cena/1.23 AS Netto FROM Produkty;
+
+SELECT Nazwa, CAST((Cena / 123.0) * 100 AS decimal(10,2)) AS CenaNetto, CAST(Cena AS decimal(10,2)) AS CenaBrutto FROM Produkty;
+
+
+-- znajdz zakupy zrobione w zeszlym tygodniu 
+
+SELECT DataZakupu FROM ZakupySklepOnline WHERE DataZakupu > DATEADD (DD,-7, GETDATE());  
+
+
+SELECT * FROM ZakupySklepOnline WHERE CAST(DataZakupu AS date) BETWEEN CAST(DATEADD(DD, -5-(DATEPART(DW, GETDATE())), GETDATE()) as date) AND CAST(DATEADD(DD, 1-(DATEPART(DW, GETDATE())), GETDATE()) as date)
