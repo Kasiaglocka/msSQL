@@ -37,3 +37,15 @@ SELECT IdKategorii, COUNT (*) AS Ilosc FROM Produkty GROUP BY IdKategorii;
 -- jaka jest srednia pensja w poszczegolnym dziale
 
 SELECT IdDzialu, AVG (PensjaPodstawowa) AS Pensja FROM Pracownicy GROUP BY IdDzialu;
+
+
+
+-- ile zakupow stacjonarnych bylo w poszczegolnym miesiacu
+
+ SELECT MONTH (DataZakupu) AS Miesiac, COUNT (*) AS Ilosc FROM ZakupySklepStacjonarny GROUP BY MONTH;
+
+
+
+-- ile zakupow online bylo w poszczegolnym dniu miesiaca
+
+SELECT DAY (DataZakupu) AS Dzien, MONTH (DataZakupu) AS Miesiac COUNT (*) AS Ilosc FROM ZakupySklepOnline GROUP BY DAY (DataZakupu), MONTH (DataZakupu)
