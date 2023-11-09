@@ -22,6 +22,7 @@ SELECT * FROM Produkty WHERE Nazwa LIKE '%LEGO%';
 
 SELECT Nazwa FROM Produkty WHERE Nazwa LIKE 'Hot Wheels%' ORDER BY Nazwa;
 
+
 -- pokaż 3 najdroższe produkty
 
 SELECT TOP 3* FROM Produkty ORDER BY Cena DESC
