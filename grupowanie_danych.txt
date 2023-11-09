@@ -1,0 +1,39 @@
+ -- ile jest dzialow w firmie
+
+SELECT COUNT (*) AS IloscDzialow FROM Dzialy; 
+
+
+
+-- jaka jest najwyzsza kwota zarobkow wsrod kobiet
+
+SELECT MAX (PensjaPodstawowa) AS NajwyzszaKwotaZarobkow FROM Pracownicy WHERE RIGHT (Imie,1) = 'a';
+
+
+
+-- ilu pracownikow jest przypisanych do danego przelozonego
+
+SELECT IdPrzelozonego, COUNT (*) AS Ilosc FROM Pracownicy GROUP BY IdPrzelozonego; 
+
+
+
+-- ilu jest klientow w kazdym z wiekow
+
+SELECT Wiek , COUNT (*) AS Ilosc FROM Klienci GROUP BY Wiek;
+
+
+
+--ile zwrotow przyjal poszczegolny pracownik
+
+SELECT IdPracownik, COUNT (*) AS Ilosc FROM Zwroty GROUP BY IdPracownik;
+
+
+
+-- ile jest produktow w poszczegolnych kategoriach
+
+SELECT IdKategorii, COUNT (*) AS Ilosc FROM Produkty GROUP BY IdKategorii;
+
+
+
+-- jaka jest srednia pensja w poszczegolnym dziale
+
+SELECT IdDzialu, AVG (PensjaPodstawowa) AS Pensja FROM Pracownicy GROUP BY IdDzialu;
