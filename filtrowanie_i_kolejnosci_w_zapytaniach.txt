@@ -1,0 +1,95 @@
+-- w jakim wieku mamy wiecej niz 5 klientow
+
+SELECT Wiek, COUNT(*) AS Ilosc
+FROM Klienci
+GROUP BY Wiek
+HAVING COUNT(*) > 5
+
+
+-- pokaz dzialy w ktorych zarabia sie srednio wiecej niz 2800zl 
+
+SELECT IdDzialu, AVG (PensjaPodstawowa) AS Pensja
+FROM Pracownicy
+GROUP BY IdDzialu
+HAVING AVG (PensjaPodstawowa) > 2800
+
+
+
+-- ilu jest pracownikow z przelozonym
+
+SELECT COUNT(IdPrzelozonego)
+FROM Pracownicy
+
+
+
+-- pokaz najtansza opcje dostawy poza odbiorem osobistym
+
+SELECT TOP 1 *
+FROM RodzajDostawy
+WHERE Nazwa <> 'Odbiór osobisty'
+ORDER BY Cena
+
+
+
+-- ilu pracownikow jest przypisanych do danego przelozonegto (wyklucz tych bez przelozonego
+
+SELECT IdPrzelozonego, COUNT(*) AS Ilosc
+FROM Pracownicy
+WHERE IdPrzelozonego IS NOT NULL
+GROUP BY IdPrzelozonego
+
+
+
+-- pokaz dni maja, w ktorych sprzedazy w sklepie stacjonarnym bylo co najmniej 5
+
+SELECT DAY(DataZakupu), COUNT(*) AS Ilosc
+FROM ZakupySklepStacjonarny
+WHERE MONTH(DataZakupu) = 5
+GROUP BY DAY(DataZakupu)
+HAVING COUNT(*) >= 5
+
+
+
+-- w ktorym dziale sa najwyzsze srednie zarobki
+
+SELECT TOP 1 IdDzialu, CAST(AVG(PensjaPodstawowa) AS decimal(10,2)) AS SrednieZarobki
+FROM Pracownicy
+GROUP BY IdDzialu
+ORDER BY SrednieZarobki DESC
+
+
+
+-- pokaz kwartal w ktorym mielismy najwiecej zakupow online
+
+SELECT TOP 1 DATEPART(QQ, DataZakupu) AS Kwartal, COUNT(*) AS Ilosc
+FROM ZakupySklepOnline
+GROUP BY DATEPART(QQ, DataZakupu)
+ORDER BY Ilosc DESC
+
+
+
+-- w ktorym dziale mezczyzni maja najnizsze srednie zarobki
+
+SELECT TOP 1 IdDzialu, CAST(AVG(PensjaPodstawowa) AS decimal(10,2)) AS SrednieZarobki
+FROM Pracownicy
+WHERE RIGHT(Imie,1) <> 'a'
+GROUP BY IdDzialu
+ORDER BY SrednieZarobki
+
+
+
+-- za ktora dostawe zaplacilismy najwiecej
+
+SELECT TOP 1 NumerDostawy, SUM(CenaZaSztuke * Ilosc) AS Kwota
+FROM DostawaProduktow
+GROUP BY NumerDostawy
+ORDER BY Kwota DESC
+
+
+
+-- znajdz produkty, ktorym cena zmienila sie wiecej niz raz w ciagu miesiaca
+
+SELECT IdProduktu, MONTH(DataOd), COUNT(*)
+FROM CenyProduktow
+GROUP BY IdProduktu, MONTH(DataOd)
+HAVING COUNT(*) > 1
