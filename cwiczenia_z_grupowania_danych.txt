@@ -1,0 +1,79 @@
+-- pokaz najtansza opcje dostawy poza odbiorem osobistym
+
+SELECT TOP 1 * 
+FROM RodzajDostawy
+WHERE Nazwa <> 'Odbiór osobisty'
+ORDER BY Cena
+
+
+
+-- ilu pracownikow jest przypisanych do danego przelozonego?- wyklucz tych bez przelozonego
+
+SELECT IdPrzelozonego, COUNT(*) AS Ilosc
+FROM Pracownicy
+WHERE IdPrzelozonego IS NOT NULL
+GROUP BY IdPrzelozonego
+
+
+
+-- pokaz dni maja, w ktorych sprzedazy w sklepie stacjonarnym bylo co najmniej 5
+
+SELECT DAY(DataZakupu), COUNT(*) AS Ilosc
+FROM ZakupySklepStacjonarny
+WHERE MONTH(DataZakupu) = 5
+GROUP BY DAY(DataZakupu)
+HAVING COUNT(*) >= 5
+
+
+
+-- w ktorym dziale sa najwyzsze srednie zarobki
+
+SELECT  TOP 1 AVG (PensjaPodstawowa) AS SrednieZarobki, IdDzialu
+FROM Pracownicy
+GROUP BY IdDzialu
+ORDER BY SrednieZarobki DESC
+
+
+SELECT TOP 1 IdDzialu, CAST(AVG(PensjaPodstawowa) AS decimal(10,2)) AS SrednieZarobki
+FROM Pracownicy
+GROUP BY IdDzialu
+ORDER BY SrednieZarobki DESC
+
+
+
+-- pokaz kwartal w ktorym mielismy najwiecej zakupow online
+
+SELECT TOP 1 COUNT (*) as Zakupy, DATEPART (q,DataZakupu) AS Kwartal
+FROM ZakupySklepOnline
+GROUP BY DATEPART (q,DataZakupu)
+ORDER BY Zakupy DESC
+
+
+
+-- w ktorym dziale mezczyzni maja najnizsze srednie zarobki
+
+SELECT TOP 1  AVG (PensjaPodstawowa) AS SrednieZarobki, IdDzialu
+FROM Pracownicy
+WHERE RIGHT (Imie,1) <> 'a'
+GROUP BY IdDzialu
+ORDER BY SrednieZarobki
+
+
+
+-- za ktora dostawe zaplacilismy najwiecej
+
+SELECT TOP 1 NumerDostawy, SUM(CenaZaSztuke * Ilosc) AS Kwota
+FROM DostawaProduktow
+GROUP BY NumerDostawy
+ORDER BY Kwota DESC
+
+
+
+-- znajdz produkty, ktorym cena zmienila sie wiecej niz raz w ciagu miesiaca 
+
+SELECT IdProduktu, MONTH(DataOd), COUNT(*)
+FROM CenyProduktow
+GROUP BY IdProduktu, MONTH(DataOd)
+HAVING COUNT(*) > 1
+
+
