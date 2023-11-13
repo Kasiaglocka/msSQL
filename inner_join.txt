@@ -12,7 +12,7 @@ FROM Produkty
 SELECT Imie, Nazwisko, NazwaDzialu
 FROM Pracownicy 
         INNER JOIN Dzialy
-                ON Pracownicy.Imie, Nazwisko = Dzialy.IdDzialu
+                ON Pracownicy.IdDzialu = Dzialy.IdDzialy
 
 
 
