@@ -1,0 +1,34 @@
+-- pokaz informacje o zakupach online (id zakupu, date, nazwe, cene i ilosc kupionych produktow)
+
+SELECT z.IdZakupySklepOnline,
+	z.DataZakupu,
+	p.Nazwa,
+	p.Cena,
+	zp.Ilosc
+FROM Produkty p
+	INNER JOIN ZakupySklepOnlineProdukt zp
+		ON p.IdProdukty = zp.IdProduktu
+	INNER JOIN ZakupySklepOnline z
+		ON z.IdZakupySklepOnline = zp.IdZakupySklepOnlineProdukt
+
+
+
+-- pokaz imie i nazwisko pracownikow oraz nazwe dostawcy, ktorego obslugiwal dany pracownik
+
+SELECT DISTINCT p.Imie, p.Nazwisko, dst.Nazwa
+FROM Pracownicy p
+	INNER JOIN Dostawa d
+		ON p.IdPracownicy = d.IdPracownicy
+	INNER JOIN Dostawcy dst
+		ON dst.IdDostawcy = d.IdDostawcy
+
+
+
+-- z jakich dzialow pracownicy przyjmowali zwroty
+
+SELECT DISTINCT d.NazwaDzialu
+FROM Pracownicy p
+	INNER JOIN Dzialy d
+		ON p.IdDzialu = d.IdDzialy
+	INNER JOIN Zwroty z
+		ON z.IdPracownik = p.IdPracownicy
