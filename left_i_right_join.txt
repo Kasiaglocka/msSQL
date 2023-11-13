@@ -1,0 +1,15 @@
+-- pokaz wszystkich klientow oraz numery kart stalego klienta tylko dla tych, ktorzy ja posiadaja
+
+SELECT Imie, Nazwisko, NumerKarty
+FROM Klienci
+       LEFT JOIN KartaStalegoKlienta
+         ON Klienci.IdKlienci = KartaStalegoKlienta.IdKlienta
+
+
+
+--pokaz wszystkie zakupy online oraz informacje o przyczynie zwrotu dla zwroconych zamowien
+
+SELECT IdZakupySklepOnline, IdKlienta, DataZakupu, Komentarz, Dostawa, Przyczyna
+FROM ZakupySklepOnline
+	LEFT JOIN Zwroty
+		ON ZakupySklepOnline.IdZakupySklepOnline = Zwroty.IdZakupu
