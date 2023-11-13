@@ -1,0 +1,33 @@
+-- pokaz informacje o produktach i nazwy kategorii produktow
+
+SELECT Produkty.Nazwa, Cena, KategorieProduktow.Nazwa AS Kategoria
+FROM Produkty
+	INNER JOIN KategorieProduktow
+		ON Produkty.IdKategorii = KategorieProduktow.IdKategorieProduktow
+
+
+
+-- w jakim dziale pracuja pracownicy
+
+SELECT Imie, Nazwisko, NazwaDzialu
+FROM Pracownicy 
+        INNER JOIN Dzialy
+                ON Pracownicy.Imie, Nazwisko = Dzialy.IdDzialu
+
+
+
+-- pokaz klienta i numer jego karty stalego klienta
+
+SELECT Imie, Nazwisko, NumerKarty
+FROM Klienci
+        INNER JOIN KartaStalegoKlienta
+                ON Klienci.IdKlienci = KatraStalegoKlienta.IdKlienta
+
+
+
+-- pokaz nazwe produktu oraz jego ceny i czas ich obowiazywania
+
+ SELECT Nazwa, CenyProduktow.Cena, DataOd, DataDo
+FROM Produkty
+	INNER JOIN CenyProduktow
+		ON Produkty.IdProdukty = CenyProduktow.IdProduktu
