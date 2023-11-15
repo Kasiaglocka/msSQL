@@ -1,0 +1,62 @@
+-- ile produktow mamy w danej kategorii
+
+SELECT kp.Nazwa, COUNT(*) AS Ilosc
+FROM Produkty p
+	INNER JOIN KategorieProduktow kp
+		ON p.IdKategorii = kp.IdKategorieProduktow
+GROUP BY kp.Nazwa
+
+
+
+-- ile razy wybrano dany rodzaj dostawy
+
+SELECT Nazwa, COUNT (*) AS Ilosc
+FROM RodzajDostawy
+     JOIN ZakupySklepOnline
+        ON Dostawa = IdRodzajDostawy
+GROUP BY Nazwa
+
+
+
+-- ile pracownicy przyjeli zwrotow
+
+SELECT Imie, Nazwisko, COUNT (*) AS IloscZwrotow
+FROM Zwroty z
+    JOIN Pracownicy p
+	   ON z.IdPracownik = p.IdPracownicy
+GROUP BY Imie, Nazwisko
+
+
+
+-- ile bylo promocyjnych zamowien online dla kazdej z promocji
+
+SELECT NazwaPromocji, COUNT (*) AS Ilosc
+FROM PromocjaZamowienieOnline
+     JOIN Promocje
+        ON IdPromocje = IdPromocji
+GROUP BY NazwaPromocji
+
+
+
+-- ile sztuk kazdego produktu zostalo kupionych w sklepie stacjonarnym
+
+SELECT NazwaPromocji, COUNT (*) AS Ilosc
+FROM PromocjaZamowienieOnline
+     JOIN Promocje
+        ON IdPromocje = IdPromocji
+GROUP BY NazwaPromocji
+
+
+
+-- jaka jest sredmnia cena kazdej kategorii produktow
+
+SELECT kp.Nazwa, CAST(AVG(CAST(Cena AS decimal(10,2))) AS decimal(10,2))
+FROM Produkty p
+	INNER JOIN KategorieProduktow kp
+		ON p.IdKategorii = kp.IdKategorieProduktow
+GROUP BY kp.Nazwa
+
+
+
+-- jaka jest wartosc kazdego z zamowien online
+
