@@ -60,3 +60,36 @@ GROUP BY kp.Nazwa
 
 -- jaka jest wartosc kazdego z zamowien online
 
+SELECT z.IdZakupySklepOnline, 
+	z.DataZakupu, 
+	CAST(SUM(CAST(p.Cena * zp.Ilosc AS decimal(10,2))) AS decimal(10,2))
+FROM Produkty p
+	INNER JOIN ZakupySklepOnlineProdukt zp
+		ON p.IdProdukty = zp.IdProduktu
+	INNER JOIN ZakupySklepOnline z
+		ON z.IdZakupySklepOnline = zp.IdZakup
+GROUP BY z.IdZakupySklepOnline, z.DataZakupu
+
+
+
+-- pokaz informacje o zakupach online (numer zamowienia, date, kwote do zaplaty, rodzaj dostawy)
+
+SELECT z.IdZakupySklepOnline, z.DataZakupu, rd.Nazwa, SUM(p.Cena * zp.Ilosc) + rd.Cena AS DoZaplaty
+FROM Produkty p
+	INNER JOIN ZakupySklepOnlineProdukt zp
+		ON p.IdProdukty = zp.IdProduktu
+	INNER JOIN ZakupySklepOnline z
+		ON z.IdZakupySklepOnline = zp.IdZakup
+	INNER JOIN RodzajDostawy rd
+		ON rd.IdRodzajDostawy = z.Dostawa
+GROUP BY z.IdZakupySklepOnline, z.DataZakupu, rd.Nazwa, rd.Cena
+
+
+
+-- jaka jest srednia pensja w kazdym z dzialow
+
+SELECT d.NazwaDzialu, CAST(AVG(p.PensjaPodstawowa) AS decimal(10,2))
+FROM Pracownicy p	
+	INNER JOIN Dzialy d
+		ON p.IdDzialu = d.IdDzialy
+GROUP BY d.NazwaDzialu
