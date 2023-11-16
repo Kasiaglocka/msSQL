@@ -1,0 +1,121 @@
+-- ile sztuk poszczegolnych zestawow Lego w sklepie stacjonarnym zostalo kupionych 
+
+SELECT p.Nazwa, COUNT(*) AS Ilosc
+FROM Produkty p
+	INNER JOIN ZakupySklepStacjonarnyProdukt zp
+		ON p.IdProdukty = zp.IdProduktu
+WHERE p.Nazwa LIKE '%LEGO%'
+GROUP BY p.Nazwa
+
+
+
+-- ktory rodzaj dostawy byl wybierany najczesciej
+
+SELECT TOP 1 rd.Nazwa
+FROM RodzajDostawy rd
+	INNER JOIN ZakupySklepOnline z
+		ON rd.IdRodzajDostawy = z.Dostawa
+GROUP BY rd.Nazwa
+ORDER BY COUNT(*) DESC
+
+
+
+-- ile razy kazdy z klientow nie posiadajacych karty stalego klienta robia zakupy
+
+SELECT k.IdKlienci, k.Imie, k.Nazwisko, COUNT(*) AS Ilosc
+FROM Klienci k
+	INNER JOIN ZakupySklepOnline z
+		ON z.IdKlienta = k.IdKlienci
+	LEFT JOIN KartaStalegoKlienta ksk
+		ON ksk.IdKlienta = k.IdKlienci
+WHERE ksk.IdKartaStalegoKlienta IS NULL
+GROUP BY k.IdKlienci, k.Imie, k.Nazwisko
+
+
+
+-- w ktorej kategorii mamy najmniej produktow
+
+SELECT TOP 1 kp.Nazwa
+FROM Produkty p
+	INNER JOIN KategorieProduktow kp
+		ON p.IdKategorii = kp.IdKategorieProduktow
+GROUP BY kp.Nazwa
+ORDER BY COUNT(*)
+
+
+
+-- jakie 3 produkty sprzedawaly sie najlepiej w wakacje w sklepie stacjonarnym
+
+SELECT TOP 3 p.Nazwa
+FROM Produkty p
+	INNER JOIN ZakupySklepStacjonarnyProdukt zp
+		ON p.IdProdukty = zp.IdProduktu
+	INNER JOIN ZakupySklepStacjonarny z
+		ON zp.IdZakup = z.IdZakupySklepStacjonarny
+WHERE MONTH(z.DataZakupu) IN (7,8)
+GROUP BY p.Nazwa
+ORDER BY SUM(Ilosc) DESC
+
+
+
+-- w ktorym dniu maja sprzedalo sie najwiecej produktow Star Wars w sklepie stacjonarnym
+
+SELECT TOP 1 DAY(z.DataZakupu) AS DzienMaja
+FROM Produkty p
+	INNER JOIN ZakupySklepStacjonarnyProdukt zp
+		ON p.IdProdukty = zp.IdProduktu
+	INNER JOIN ZakupySklepStacjonarny z
+		ON z.IdZakupySklepStacjonarny = zp.IdZakup
+WHERE MONTH(z.DataZakupu) = 5 AND p.Nazwa LIKE '%Star Wars%'
+GROUP BY DAY(z.DataZakupu)
+ORDER BY SUM(Ilosc) DESC
+
+
+
+-- w ktorym dziale jest najnizsza srednia wyplata (pensja powiekszona o premie- premia 30 jako 30%)
+
+SELECT TOP 1 d.NazwaDzialu
+FROM Pracownicy p
+	INNER JOIN Dzialy d
+		ON p.IdDzialu = d.IdDzialy
+GROUP BY d.NazwaDzialu
+ORDER BY AVG(p.PensjaPodstawowa + p.PensjaPodstawowa * p.Premia / 100.0)
+
+
+
+-- ile razy kazdego dnia lutego dokonywano zakupow online
+
+SELECT DAY(DataZakupu), COUNT(*) AS IloscZakupow
+FROM ZakupySklepOnline
+WHERE MONTH(DataZakupu) = 2
+GROUP BY DAY(DataZakupu)
+
+
+
+-- w ktorym dniu grudnia dokonano najwiecej zakupow w sklepie stacjonarnym wykorzystujac promocje 
+
+SELECT TOP 1 DAY(z.DataZakupu)
+FROM ZakupySklepStacjonarny z
+	INNER JOIN PromocjaZakupowSklepStacjonarny pzss
+		ON pzss.IdZakupu = z.IdZakupySklepStacjonarny
+WHERE MONTH(z.DataZakupu) = 12
+GROUP BY DAY(z.DataZakupu)
+ORDER BY COUNT(*) DESC
+
+
+
+-- ktorych zestawow LEGO nie bedacych Star Wars i nie kupionych na promocji sprzedalo sie wiecej niz 30 w sklepie stacjonarnym
+
+SELECT p.Nazwa
+FROM Produkty p
+	INNER JOIN ZakupySklepStacjonarnyProdukt zp
+		ON zp.IdProduktu = p.IdProdukty
+	INNER JOIN ZakupySklepStacjonarny z
+		ON z.IdZakupySklepStacjonarny = zp.IdZakup
+	LEFT JOIN PromocjaZakupowSklepStacjonarny pzzs
+		ON pzzs.IdZakupu = z.IdZakupySklepStacjonarny
+WHERE pzzs.IdPromocjaZakupowSklepStacjonarny IS NULL
+	AND p.Nazwa LIKE '%LEGO%'
+	AND p.Nazwa NOT LIKE '%Star Wars%'
+GROUP BY p.Nazwa
+HAVING SUM(zp.Ilosc) > 30
