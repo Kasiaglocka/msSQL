@@ -1,0 +1,20 @@
+-- pokaz jedna kobiete i jednego mezczyzne
+SELECT TOP 1 * 
+FROM Pracownicy
+WHERE RIGHT(Imie, 1) = 'a'
+
+UNION
+
+SELECT TOP 1 *
+FROM Pracownicy
+WHERE RIGHT(Imie, 1) <> 'a'
+
+
+
+-- pokaz imie, nazwisko i plec pracownika
+
+SELECT Imie, Nazwisko, 
+CASE WHEN RIGHT(Imie, 1) = 'a' THEN 'Kobieta' 
+ELSE 'Mężczyzna' 
+END AS Plec
+FROM Pracownicy
