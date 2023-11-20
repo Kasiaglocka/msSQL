@@ -1,0 +1,61 @@
+-- pokaz produkty kosztujace wiecej niz srednia cena asortymentu
+
+SELECT *
+FROM Produkty
+WHERE Cena > (SELECT AVG(Cena) FROM Produkty)
+
+
+
+-- ile jest kobiet, a ile mezczyzn
+
+SELECT x.Plec, COUNT(*) AS Ilosc
+FROM (SELECT CASE WHEN RIGHT(Imie, 1) = 'a' THEN 'Kobieta' ELSE 'Mężczyzna' END AS Plec
+		FROM Pracownicy) x
+GROUP BY x.Plec
+
+
+
+
+-- podaj ilosc sprzedanego asortymentu w sklepie stacjonarnym z podzialem na miesiace podajac ich nazwy oraz zachowujac kolejnosc miesiecy
+
+SELECT CASE WHEN MONTH(z.DataZakupu) = 1 THEN 'Styczeń'
+		WHEN MONTH(z.DataZakupu) = 2 THEN 'Luty'
+		WHEN MONTH(z.DataZakupu) = 3 THEN 'Marzec'
+		WHEN MONTH(z.DataZakupu) = 4 THEN 'Kwiecień'
+		WHEN MONTH(z.DataZakupu) = 5 THEN 'Maj'
+		WHEN MONTH(z.DataZakupu) = 6 THEN 'Czerwiec'
+		WHEN MONTH(z.DataZakupu) = 7 THEN 'Lipiec'
+		WHEN MONTH(z.DataZakupu) = 8 THEN 'Sierpień'
+		WHEN MONTH(z.DataZakupu) = 9 THEN 'Wrzesień'
+		WHEN MONTH(z.DataZakupu) = 10 THEN 'Październik'
+		WHEN MONTH(z.DataZakupu) = 11 THEN 'Listopad'
+		WHEN MONTH(z.DataZakupu) = 12 THEN 'Grudzień' END AS Miesiac,
+	SUM(zp.Ilosc) AS Ilosc
+FROM ZakupySklepStacjonarnyProdukt zp
+	INNER JOIN ZakupySklepStacjonarny z
+		ON zp.IdZakup = z.IdZakupySklepStacjonarny
+GROUP BY MONTH(z.DataZakupu)
+ORDER BY MONTH(z.DataZakupu)
+
+
+
+-- ile razy wybrano dostawe Poczta Polska dla zakupow online w kazdej kategorii prouktu
+
+SELECT x.Nazwa, COUNT(*) AS Ilosc
+FROM
+	(SELECT kp.Nazwa
+	FROM Produkty p
+		INNER JOIN KategorieProduktow kp
+			ON p.IdKategorii = kp.IdKategorieProduktow
+		INNER JOIN ZakupySklepOnlineProdukt zp
+			ON zp.IdProduktu = p.IdProdukty
+		INNER JOIN ZakupySklepOnline z
+			ON z.IdZakupySklepOnline = zp.IdZakup
+		INNER JOIN RodzajDostawy rd
+			ON rd.IdRodzajDostawy = z.Dostawa
+	WHERE rd.Nazwa = 'Poczta Polska'
+	GROUP BY kp.Nazwa, z.IdZakupySklepOnline) x
+GROUP BY x.Nazwa
+
+
+
