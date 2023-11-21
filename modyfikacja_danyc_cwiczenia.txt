@@ -1,0 +1,61 @@
+-- dodaj trzy dowolne okresy z cenami dla telefonu dodanego w powyzszym zadaniu
+
+INSERT INTO CenyProduktow(Cena, DataOd, DataDo, IdProduktu)
+VALUES (4299, '2020-01-01', '2020-03-01', (SELECT IdProdukty FROM Produkty WHERE Nazwa = 'Samsung S10+')),
+	(4199, '2020-03-01', '2020-07-01', (SELECT IdProdukty FROM Produkty WHERE Nazwa = 'Samsung S10+')),
+	(4099, '2020-07-01', '2020-12-31', (SELECT IdProdukty FROM Produkty WHERE Nazwa = 'Samsung S10+'))
+
+
+
+-- informacje o produktach (Nazwa, Nazwa kategorii, Cena, Ilość dostarczonych przez dostawcow sztuk) wstaw do nowej tabeli
+
+SELECT p.Nazwa, kp.Nazwa AS NazwaKategorii, p.Cena, ISNULL(SUM(Ilosc), 0) AS Ilosc
+INTO NoweProdukty
+FROM Produkty p
+	INNER JOIN KategorieProduktow kp
+		ON p.IdKategorii = kp.IdKategorieProduktow
+	LEFT JOIN DostawaProduktow dp
+		ON dp.IdProduktu = p.IdProdukty
+GROUP BY p.Nazwa, kp.Nazwa, p.Cena
+
+
+
+-- dodaj nowa kategorie produktow i dodaj do niej 2 nowe produkty
+
+INSERT INTO KategorieProduktow(Nazwa)
+VALUES('Akcesoria')
+
+INSERT INTO Produkty(Nazwa, Cena, IdKategorii)
+VALUES ('Okulary przeciwsłoneczne', 23, (SELECT IdKategorieProduktow FROM KategorieProduktow WHERE Nazwa = 'Akcesoria')),
+	('Czapka z daszkiem NIKE', 49, (SELECT IdKategorieProduktow FROM KategorieProduktow WHERE Nazwa = 'Akcesoria'))
+
+
+
+-- zwieksz o 3% ceny wszystkich klockow lego nie bedacych Star Wars
+
+UPDATE Produkty
+SET Cena = Cena * 1.03
+FROM Produkty p
+WHERE Nazwa LIKE '%LEGO%' 
+	AND Nazwa NOT LIKE '%Star Wars%'
+	AND IdProdukty = p.IdProdukty
+
+
+
+-- obniz cene o 50zl telefonom kupowanym online w marcu, ktorych sprzedaly sie maksymalnie 2 sztuki
+
+UPDATE Produkty
+SET Cena = Cena - 50
+WHERE IdProdukty IN (
+		SELECT p.IdProdukty
+		FROM Produkty p
+			INNER JOIN KategorieProduktow kp
+				ON p.IdKategorii = kp.IdKategorieProduktow
+			INNER JOIN ZakupySklepOnlineProdukt zp
+				ON zp.IdProduktu = p.IdProdukty
+			INNER JOIN ZakupySklepOnline z
+				ON z.IdZakupySklepOnline = zp.IdZakup
+		WHERE MONTH(z.DataZakupu) = 3
+			AND kp.Nazwa = 'Telefony'
+		GROUP BY p.IdProdukty
+		HAVING SUM(zp.Ilosc) <= 2)
