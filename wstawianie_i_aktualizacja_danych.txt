@@ -1,0 +1,38 @@
+-- dodaj siebie jako klienta
+
+INSERT INTO Klienci(Imie, Nazwisko, Wiek)
+VALUES ('Katarzyna', 'Głocka', 37)
+
+
+
+-- dodaj do sklepu nowy produkt z telefonem, ktorego uzywasz
+
+INSERT INTO Produkty(Nazwa, Cena, IdKategorii)
+VALUES('Samsung S10+', 4400, (SELECT IdKategorieProduktow FROM KategorieProduktow WHERE Nazwa = 'Telefony'))
+
+
+
+
+-- usun komentarz do zamowienia online nr 211
+
+UPDATE ZakupySklepOnline
+SET Komentarz = ''
+WHERE IdZakupySklepOnline = 211
+
+
+
+-- ustaw cene iPhone X jako srednia cene wszystkich iPhone
+
+UPDATE Produkty
+SET Cena = (SELECT AVG(Cena) FROM Produkty WHERE Nazwa LIKE '%iPhone%')
+WHERE Nazwa = 'Apple iPhone X'
+
+
+
+-- usun cale zamowienie online nr 333
+
+DELETE FROM ZakupySklepOnlineProdukt
+WHERE IdZakup = 333
+
+DELETE FROM ZakupySklepOnline
+WHERE IdZakupySklepOnline = 333
