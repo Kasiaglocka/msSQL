@@ -1,0 +1,153 @@
+-- stworz widok prezentujacy ilosc sprzedanych sztuk w kazdej z kategorii w sklepie online
+
+CREATE VIEW SprzedazOnlineKategoria
+AS
+SELECT kp.Nazwa, SUM(zp.Ilosc) AS Ilosc
+FROM Produkty p
+	INNER JOIN KategorieProduktow kp
+		ON p.IdProdukty = kp.IdKategorieProduktow
+	INNER JOIN ZakupySklepOnlineProdukt zp
+		ON zp.IdProduktu = p.IdProdukty
+GROUP BY kp.Nazwa
+
+
+
+-- stworz widok prezentujacy ilosc sprzedanych sztuk w sklepie stacjonarnym kazdego z produktow
+
+CREATE VIEW ZakupyStacjonarne
+AS
+SELECT p.Nazwa, ISNULL(SUM(zp.Ilosc), 0) AS Ilosc
+FROM Produkty p
+	LEFT JOIN ZakupySklepStacjonarnyProdukt zp
+		ON zp.IdProduktu = p.IdProdukty
+GROUP BY p.Nazwa
+
+
+
+-- stworz widok prezentujacy ilosc dostarczonych sztuk kazdego z produktow
+
+CREATE VIEW DostawyProduktow
+AS
+SELECT p.Nazwa, ISNULL(SUM(dp.Ilosc), 0) AS Ilosc
+FROM Produkty p
+	LEFT JOIN DostawaProduktow dp
+		ON p.IdProdukty = dp.IdProduktu
+GROUP BY p.Nazwa
+
+
+
+-- wykorzystujac trzy poprzednio utworzone widoki wyswietl stany magazynowe produktow zakladajac, ze stan poczatkowy to 111 produktow
+
+SELECT zo.Nazwa, 111 + dp.Ilosc - zs.Ilosc - zo.Ilosc AS Ilosc
+FROM ZakupyOnline zo
+	INNER JOIN ZakupyStacjonarne zs
+		ON zo.Nazwa = zs.Nazwa
+	INNER JOIN DostawyProduktow dp
+		ON dp.Nazwa = zo.Nazwa
+
+
+
+-- stworz widok z produktami wyswietlajacy ceny z momentu wywolania zapytania, jesli nie znalazlo ceny, wyswietl cene z tabeli z produktami
+
+CREATE VIEW ProduktyAktualnaCena
+AS
+SELECT p.IdProdukty, p.Nazwa, p.IdKategorii, ISNULL(cp.Cena, p.Cena) AS Cena
+FROM Produkty p
+	LEFT JOIN CenyProduktow cp
+		ON p.IdProdukty = cp.IdProduktu
+WHERE GETDATE() BETWEEN cp.DataOd AND cp.DataDo
+	OR cp.IdCenyProduktow IS NULL
+
+
+
+-- korzystajac z widoku z poprzedniego zadania stworz widok z kwotami za sprzedaz produktow online
+
+CREATE VIEW SprzedazOnlineKwoty
+AS
+SELECT pac.Nazwa, SUM(pac.Cena * zp.Ilosc) AS Kwota
+FROM ProduktyAktualnaCena pac
+	INNER JOIN ZakupySklepOnlineProdukt zp
+		ON pac.IdProdukty = zp.IdProduktu
+GROUP BY pac.Nazwa
+
+
+
+-- znajdz produkty kosztujace wiecej niz srednia cena w swojej kategorii. Stworz potrzebny widok, nie korzystaj z zapytan zagniezdzonych
+
+CREATE VIEW SredniaCenaKategorii
+AS
+SELECT kp.IdKategorieProduktow, AVG(CAST(p.Cena AS decimal(10,2))) AS SredniaCena
+FROM Produkty p
+	INNER JOIN KategorieProduktow kp
+		ON p.IdKategorii = kp.IdKategorieProduktow
+GROUP BY kp.IdKategorieProduktow
+
+SELECT *
+FROM Produkty p
+	INNER JOIN SredniaCenaKategorii sck
+		ON p.IdKategorii = sck.IdKategorieProduktow
+WHERE p.Cena > sck.SredniaCena
+
+
+
+-- stworz widok ze srednia cena produktow i nastenie z jego pomoca znajdz wszystkie produkty kosztujace mniej niz srednia cena produktow
+
+CREATE VIEW SredniaCenaProduktow
+AS
+SELECT AVG(CAST(Cena AS decimal(10,2))) AS Srednia
+FROM Produkty
+
+SELECT *
+FROM Produkty p
+	CROSS JOIN SredniaCenaProduktow scp
+WHERE p.Cena < scp.Srednia
+
+
+
+-- stworz widok wyswietlajacy numer miesiaca i polska nazwe miesiaca
+
+CREATE VIEW Miesiace
+AS
+SELECT 1 AS NrMiesiaca, 'Styczeń' AS Miesiac
+UNION
+SELECT 2 AS NrMiesiaca, 'Luty' AS Miesiac
+UNION
+SELECT 3 AS NrMiesiaca, 'Marzec' AS Miesiac
+UNION
+SELECT 4 AS NrMiesiaca, 'Kwiecień' AS Miesiac
+UNION
+SELECT 5 AS NrMiesiaca, 'Maj' AS Miesiac
+UNION
+SELECT 6 AS NrMiesiaca, 'Czerwiec' AS Miesiac
+UNION
+SELECT 7 AS NrMiesiaca, 'Lipiec' AS Miesiac
+UNION
+SELECT 8 AS NrMiesiaca, 'Sierpień' AS Miesiac
+UNION
+SELECT 9 AS NrMiesiaca, 'Wrzesień' AS Miesiac
+UNION
+SELECT 10 AS NrMiesiaca, 'Październik' AS Miesiac
+UNION
+SELECT 11 AS NrMiesiaca, 'Listopad' AS Miesiac
+UNION
+SELECT 12 AS NrMiesiaca, 'Grudzień' AS Miesiac
+
+
+
+-- wykorzystujac widok z miesiacami pokaz ile w danym miesiacu sprzedalismy sztuk kazdego z produktow w sklepie online. Posortuj wyniki wg miesiaca i malejaco wg ilosci
+
+SELECT m.Miesiac, p.Nazwa, SUM(zp.Ilosc) AS Ilosc
+FROM Produkty p
+	INNER JOIN ZakupySklepOnlineProdukt zp
+		ON p.IdProdukty = zp.IdProduktu
+	INNER JOIN ZakupySklepOnline z
+		ON z.IdZakupySklepOnline = zp.IdZakup
+	INNER JOIN Miesiace m
+		ON MONTH(z.DataZakupu) = m.NrMiesiaca
+GROUP BY m.Miesiac, m.NrMiesiaca, p.Nazwa
+ORDER BY m.NrMiesiaca, Ilosc DESC
+
+
+
+
+
