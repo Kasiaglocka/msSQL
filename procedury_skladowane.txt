@@ -1,0 +1,58 @@
+-- procedura sprawdzajaca czy liczba jest dodatnia czy ujemna
+
+CREATE PROCEDURE SprawdzLiczbe
+@liczba int
+AS
+BEGIN
+    IF @liczba = 0
+    BEGIN
+       SELECT 'Zero'
+    END
+    ELSE IF @liczba < 0
+    BEGIN 
+       SELECT 'Ujemna'
+    END
+    ELSE IF @liczba > 0
+    BEGIN
+       SELECT 'Dodatnia'
+    END
+END
+
+
+exec SprawdzLiczbe 7654
+
+
+-- procedura, ktora bedzie wyciagala pracownika
+
+CREATE PROCEDURE ZnajdzPracownika
+@imie varchar(50) = NULL
+@nazwisko varchar(50) = NULL
+AS
+BEGIN
+   SELECT * FROM Pracownicy
+   WHERE (@imie IS NULL OR Imie = @imie)
+      AND (@nazwisko IS NULL OD Nazwisko = @nazwisko)
+END
+
+exec ZnajdzPracownika
+
+
+
+-- trigger, ktory powoduje, ze nie jestesmy w stanie dodac produktu, ktory juz istnieje (o tej samej nazwie)
+
+CREATE TRIGGER DodanieProduktu
+ON Produkty
+INSTEAD OF INSERT
+AS
+BEGIN
+    IF exists (SELECT * FROM Produkty WHERE Nazwa = (SELECT i.Nazwa FROM inserted i)
+      BEGIN
+         SELECT 'Produkt juz istnieje'
+      END
+    ELSE
+      BEGIN
+         INSERT INTO Produkty(Nazwa, Cena. IdKategorii)
+         SELECT i.Nazwa, i.Cena, i.IdKategorii FROM inserted i
+         SELECT 'Dodano nowy produkt'
+      END
+END
