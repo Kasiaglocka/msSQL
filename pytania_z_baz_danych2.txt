@@ -1,0 +1,35 @@
+-- znajdz pracownikow urodzonych po roku 1987
+
+SELECT *
+FROM Pracownicy
+WHERE DataUrodzenia >= ˈ1987-01-01ˈ
+
+
+
+-- podaj imie i nazwisko pracownika oraz imie i nazwisko szefa projektu, w ktorym bral udzial- tylko unikalne wystapienia
+
+SELECT DISTINCT p1.Imie AS ImiePracownika,
+    p1.Nazwisko AS NazwiskoPracownika,
+    p2.Imie AS ImieSzefa,
+    p2.Nazwisko AS NazwiskoSzefa
+FROM Pracownicy p1
+    INNER JOIN PracownicyProjekty pp
+        ON p1.PESEL = pp.Pracownik
+    INNER JOIN Projekty p
+        ON pp.NrProj = p.NumerProjektu
+    INNER JOIN Pracownicy p2
+        ON p2.SzefProjektu = PESEL
+WHERE p1.PESEL <> p2.PESEL
+
+
+
+-- znajdz pracownikow, ktorzy nigdy nie byli przewodniczacym grupy, ani nie zarzadzali projektem
+
+SELECT p.Imie, p.Nazwisko
+FROM Pracownicy p
+    LEFT JOIN Projekty proj
+        ON proj.SzefProjektu = p.PESEL
+    LEFT JOIN Grupy g
+        ON g.Przewodniczacy = p.PESEL
+WHERE proj.SzefProjektu IS NULL
+    AND g.Przewodniczacy IS NULL
