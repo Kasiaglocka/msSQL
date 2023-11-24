@@ -1,0 +1,35 @@
+-- ile paragonow zostalo wystawionych w tym roku
+
+SELECT COUNT(*)
+FROM Paragon
+WHERE YEAR(DataZakupu) = 2023
+
+SELECT COUNT(*)
+FROM Paragon
+WHERE DataZakupu >= ˈ2023-01-01ˈ
+
+SELECT COUNT(*)
+FROM Paragon
+WHERE YEAR(DataZakupu) = YEAR(GETDATE())
+
+
+
+-- ktory pracownik wystawil najwiecej paragonow
+
+SELECT TOP 1 s.Imie, s.Nazwisko
+FROM Paragon p
+    INNER JOIN Sprzedawcy s
+        ON p.NumerSprzedawcy = s.Id
+GROUP BY s.Imie, s.Nazwisko
+ORDER BY COUNT(*) DESC
+
+
+
+-- policz wartosc kazdego paragonu zawierajacego przynajmniej dwie pozycje
+
+SELECT zp.Paragon AS NumerParagonu, SUM(zp.Ilosc * p.Cena) AS Kwota
+FROM Procukty p
+INNER JOIN ZawartoscParagonu zp
+ON p.EAN = zp.EAN
+GROUP BY zp.Paragon
+HAVING COUNT(*) >= 2
