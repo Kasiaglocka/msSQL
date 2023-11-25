@@ -1,0 +1,36 @@
+-- znajdz powiazane filmy do kazdego filmu
+
+SELECT f1.Tytul AS TytulFilmu,
+    f2.Tytul AS FilmPowiazany
+FROM Filmy f1
+    INNER JOIN FilmyPowiazane fp
+        ON f1.NrFilmu = fp.Film
+    INNER JOIN Filmy f2
+        ON f2.NrFilmu = fp.Powiazany
+
+
+
+-- ile filmow mialo premiere w Polsce w innhym roku niz rok produkcji
+
+SELECT *
+FROM Filmy f
+    INNER JOIN PremieraFilmu pf
+        ON f.NrFilmu = pf.Film
+    INNER JOIN Kraje k
+        ON k.KodKraju = pf.Kraj
+WHERE k.Nazwa = ˈPolskaˈ
+    AND YEAR(pf.DataPremiery) <> f.RokProdukcji
+
+
+
+-- pokaz filmy i kraj produkcji, ktore mialy premiere w przynajmniej dwoch panstwach
+
+SELECT *
+FROM Filmy f
+    INNER JOIN PremieraFilmu pf
+        ON f.NrFilmu = pf.Film
+    INNER JOIN Kraje k
+        ON k.KodKraju = pf.Kraj
+WHERE k.Nazwa <> ˈŚwiatˈ
+GROUP BY f.Tytul
+HAVING COUNT(*) >= 2
